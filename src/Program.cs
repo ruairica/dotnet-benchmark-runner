@@ -1,20 +1,28 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 
-public class ExistsVsAnyListComparison
+public class ToListComparison
 {
-    public List<int> NumbersList = Enumerable.Range(0, 10_000).ToList();
+    [Params(100, 1000, 10000)]
+    public int N;
 
     [Benchmark]
-    public void Any()
+    public void ListConstructor()
     {
-        this.NumbersList.Any(x => x == 9_555);
+        List<int> numbers = new List<int>(Enumerable.Range(1, N));
     }
 
     [Benchmark]
-    public void Exists()
+    public void ToListTest()
     {
-        this.NumbersList.Exists(x => x == 9_555);
+        List<int> numbers = Enumerable.Range(1, N).ToList();
+    }
+
+
+    [Benchmark]
+    public void SpreadTest()
+    {
+        List<int> numbers = [.. Enumerable.Range(1, N)];
     }
 }
 
@@ -22,6 +30,6 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var summary = BenchmarkRunner.Run<ExistsVsAnyListComparison>();
+        var summary = BenchmarkRunner.Run<ToListComparison>();
     }
 }
